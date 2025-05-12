@@ -40,7 +40,7 @@ export class ProductoComponent implements OnInit {
       nombre: ['', Validators.required],
       categoria: ['', Validators.required],
       codigo: ['', Validators.required],
-      descripcion: [''],
+      descripcion: ['', Validators.required],
       precio: [0, [Validators.required, Validators.min(0)]],
       stock: [0, [Validators.required, Validators.min(0)]],
     });
@@ -74,6 +74,7 @@ export class ProductoComponent implements OnInit {
 
     this.movimientoService.crearMovimiento(movimiento).subscribe({
       next: () => {
+         this.cargarProductos();
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
@@ -148,8 +149,14 @@ export class ProductoComponent implements OnInit {
         this.dialogVisible = false;
         this.mostrarExito('Producto creado exitosamente');
       },
-      error: () => this.mostrarError('Error al crear producto'),
-    });
+     error: (err) => {
+      const mensaje = err.error || 'Error al crear el producto';
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: mensaje,
+      })
+    }});
   }
 
   actualizar(producto: Producto): void {

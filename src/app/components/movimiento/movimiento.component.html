@@ -45,7 +45,7 @@
               <ng-template pTemplate="header">
                 <tr>
                   <th>ID</th>
-                  <th>Producto ID</th>
+                  <th>Producto</th>
                   <th>Tipo</th>
                   <th>Cantidad</th>
                   <th>Fecha</th>
@@ -56,7 +56,7 @@
               <ng-template pTemplate="body" let-mov>
                 <tr>
                   <td>{{ mov.id }}</td>
-                  <td>{{ mov.producto }}</td>
+                  <td>{{ mov.nombreProducto+' ('+mov.idProducto+')' }}</td>
                   <td>{{ mov.tipo }}</td>
                   <td>{{ mov.cantidad }}</td>
                   <td>{{ mov.fecha | date : "short" }}</td>
