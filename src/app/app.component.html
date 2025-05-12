@@ -1,0 +1,93 @@
+<div
+  class="app-container app-theme-dark body-tabs-shadow fixed-header closed-sidebar"
+>
+  <!-- INICIA LA SECCIÓN  CONTENEDOR DE TODA LA CABECERA DE MENU-->
+  
+  <div class="app-header header-shadow">
+    <!-- inicia la sección  contenedor del logo izquierdo-->
+
+    <!-- fin la sección  contenedor del logo izquierdo-->
+
+    <div class="app-header__menu">
+      <span>
+       
+      </span>
+    </div>
+    <div class="app-header__content">
+      <div class="app-header-right">
+        <b>Navegación</b>
+        <div class="header-btn-lg pr-0">
+          
+          <div class="widget-content p-0">
+            
+            <div class="widget-content-wrapper">
+              
+              <div class="widget-content-right">
+                <div class="btn-group">
+                 <p-button label="Productos" [routerLink]="['/productos']" severity="info"></p-button>
+                 <p-button class="ml-2" label="Movimientos" [routerLink]="['/movimientos']" severity="primary"></p-button>
+                </div>
+              </div>
+                <div class="widget-content-left  ml-3 header-user-info">
+                              <div class="widget-heading">
+                                 
+                              </div>
+                              <div class="widget-subheading">
+                                
+                              </div>
+                          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- FIN LA SECCIÓN  CONTENEDOR DE TODA LA CABECERA DE MENU-->
+  <!------------------------------------------------------------------------------------------------------------>
+  <!-- **** INICIA LA SECCIÓN QUE ES LA QUE CONTIENE LA CONFIGURACION GRAFICA DE APLICACION SE MUESTRA CON EL ICONO DE HEERAMIENTAS EN LA PARTE INFERIROR DERECHA ****-->
+
+  <!--**** FIN LA SECCIÓN QUE ES LA QUE CONTIENE LA CONFIGURACION GRAFICA DE APLICACION SE MUESTRA CON EL ICONO DE HEERAMIENTAS EN LA PARTE INFERIROR DERECHA ****-->
+  <!------------------------------------------------------------------------------------------------------------>
+  <!-- **** INICIA LA SECCIÓN LLAMADA APP-MAIN QUE ES LA QUE CONTIENE TODA LA NAVEGACIÓN DE LA PAGINA ****-->
+  <div class="app-main">
+    <!-- inicia la seccion lateral izquierda donde se encuentra la navegación-->
+
+    <div class="app-main__outer">
+      <div
+        class="app-main__inner"
+        style="          
+          background-repeat: no-repeat;
+          background-position: right;
+          background-position-y: 50px;
+        "
+      >
+        <router-outlet></router-outlet>
+      </div>
+     <!-- <div class="app-wrapper-footer">-->
+        <div class="app-footer">
+          <div class="app-footer__inner">
+            <div class="app-footer-left">
+             
+              <div>
+                 | Medellín
+                <span id="copyright">
+                  <script>
+                    document
+                      .getElementById("copyright")
+                      .appendChild(
+                        document.createTextNode(new Date().getFullYear())
+                      );
+                  </script>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      <!--</div>-->
+    </div>
+  </div>
+
+
+</div>
+<!-- Diálogos de confirmación -->
