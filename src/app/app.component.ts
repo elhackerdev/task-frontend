@@ -17,7 +17,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 })
 export class AppComponent {
   constructor(private primeng: PrimeNG) {}
-  title = 'Campidev';
+  title = 'Inventario';
   ngOnInit() {
     this.primeng.ripple.set(true);
 }
