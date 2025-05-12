@@ -4,8 +4,6 @@
 
 Este proyecto ha sido creado utilizando **Angular 19**. A continuación, encontrarás las instrucciones necesarias para clonar, instalar y ejecutar el proyecto en tu entorno local.
 
-> Visita nuestra web para más herramientas útiles en desarrollo web: [gptonline.ai/es](https://gptonline.ai/es/)
-
 ---
 
 ## Requisitos previos
