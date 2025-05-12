@@ -26,13 +26,13 @@ npm install -g @angular/cli
 1. **Clona el repositorio:**
 
 ```bash
-git clone https://github.com/usuario/proyecto-angular19.git
+ git clone https://github.com/elhackerdev/inventario-frontend
 ```
 
 2. **Accede al directorio del proyecto:**
 
 ```bash
-cd proyecto-angular19
+cd inventario-frontend
 ```
 
 3. **Instala las dependencias:**
