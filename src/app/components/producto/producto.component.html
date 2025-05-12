@@ -5,226 +5,286 @@
         <div class="row" align="center">
           <div class="col-md-12">
             <h3>Gestión de Productos</h3>
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    
-    <button
-      pButton
-      type="button"
-      icon="pi pi-plus"
-      label="Nuevo"
-      class="p-button-success"
-      (click)="abrirDialogoNuevo()"
-    ></button>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-plus"
+                label="Nuevo"
+                class="p-button-success"
+                (click)="abrirDialogoNuevo()"
+              ></button>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label for="filtroProducto">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filtroNombre"
+                  placeholder="Buscar por Nombre"
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="filtroProducto">Categoría</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filtroCategoria"
+                  placeholder="Buscar por Categoría"
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="filtroProducto">Codigo</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filtroCodigo"
+                  placeholder="Buscar por Codigo"
+                />
+              </div>
+
+              <div class="col-md-3 d-flex align-items-end">
+                <button
+                  class="btn btn-primary w-100"
+                  (click)="
+                    cargarProductos(filtroNombre, filtroCategoria, filtroCodigo)
+                  "
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
+
+            <p-table
+              [value]="productos"
+              [paginator]="true"
+              [rows]="10"
+              [loading]="loading"
+              selectionMode="single"
+              [(selection)]="productoSeleccionado"
+              dataKey="id"
+              responsiveLayout="scroll"
+              class="shadow-sm"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Código</th>
+                  <th>Precio</th>
+                  <th>Descripción</th>
+                  <th>Stock</th>
+                  <th>Fecha creación</th>
+                  <th>Acciones</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-producto>
+                <tr>
+                  <td>{{ producto.nombre }}</td>
+                  <td>{{ producto.categoria }}</td>
+                  <td>{{ producto.codigo }}</td>
+                  <td>{{ producto.precio | currency : "USD" }}</td>
+                  <td>{{ producto.descripcion }}</td>
+                  <td>{{ producto.stock }}</td>
+                  <td>{{ producto.fechaCreacion | date : "short" }}</td>
+                  <td style="font-size: xx-small;">
+                    <div class="btn-group">
+                    <button
+                      pButton
+                      icon="pi pi-pencil"
+                      size="small"
+                      label="Actualizar"
+                      class="p-button-rounded p-button-warning p-mr-2 mr-2"
+                      (click)="editar(producto)"
+                    ></button>
+                    <button
+                      pButton
+                      size="small"
+                      icon="pi pi-trash"
+                      label="Eliminar"
+                      class="p-button-rounded p-button-danger mr-2"
+                      (click)="eliminar(producto.id!)"
+                    ></button>
+                    <button
+                      pButton
+                      size="small"
+                      icon="pi pi-plus-circle"
+                      label="Agregar Movimiento"
+                      class="p-button-rounded p-button-success"
+                      (click)="abrirDialogoMovimiento(producto.id)"
+                      title="Agregar Movimiento"
+                    ></button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diálogo para crear/editar producto -->
+    <p-dialog
+      [(visible)]="dialogVisible"
+      header="{{ productoSeleccionado ? 'Editar Producto' : 'Nuevo Producto' }}"
+      [modal]="true"
+      [closable]="false"
+      [style]="{ width: '500px' }"
+    >
+      <form [formGroup]="productoForm" (ngSubmit)="guardar()">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            class="form-control"
+            formControlName="nombre"
+            [ngClass]="{
+              'is-invalid':
+                productoForm.get('nombre')?.invalid &&
+                productoForm.get('nombre')?.touched
+            }"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="categoria">Categoría</label>
+          <input
+            id="categoria"
+            type="text"
+            class="form-control"
+            formControlName="categoria"
+            [ngClass]="{
+              'is-invalid':
+                productoForm.get('categoria')?.invalid &&
+                productoForm.get('categoria')?.touched
+            }"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="codigo">Código</label>
+          <input
+            id="codigo"
+            type="text"
+            class="form-control"
+            formControlName="codigo"
+            [ngClass]="{
+              'is-invalid':
+                productoForm.get('codigo')?.invalid &&
+                productoForm.get('codigo')?.touched
+            }"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio</label>
+          <input
+            id="precio"
+            type="number"
+            class="form-control"
+            formControlName="precio"
+            min="0"
+          />
+        </div>
+        <div class="form-group">
+          <label for="precio">Descripción</label>
+          <textarea
+            id="descripcion"
+            type="text"
+            class="form-control"
+            formControlName="descripcion"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="stock">Stock</label>
+          <input
+            id="stock"
+            type="number"
+            class="form-control"
+            formControlName="stock"
+            min="0"
+          />
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <button
+            pButton
+            type="button"
+            label="Cancelar"
+            class="p-button-secondary mr-2"
+            (click)="dialogVisible = false"
+          ></button>
+          <button
+            pButton
+            type="submit"
+            label="Guardar"
+            [disabled]="productoForm.invalid"
+            class="p-button-primary"
+          ></button>
+        </div>
+      </form>
+    </p-dialog>
+    <p-dialog
+      [(visible)]="dialogoMovimientoVisible"
+      header="Registrar Movimiento"
+      [modal]="true"
+      [closable]="false"
+      [style]="{ width: '400px' }"
+    >
+      <form [formGroup]="movimientoForm" (ngSubmit)="registrarMovimiento()">
+        <div class="form-group">
+          <label for="tipo">Tipo</label>
+          <select id="tipo" formControlName="tipo" class="form-control">
+            <option value="ENTRADA">ENTRADA</option>
+            <option value="SALIDA">SALIDA</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="cantidad">Cantidad</label>
+          <input
+            type="number"
+            id="cantidad"
+            formControlName="cantidad"
+            class="form-control"
+            min="1"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea
+            id="descripcion"
+            formControlName="descripcion"
+            class="form-control"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <button
+            pButton
+            type="button"
+            label="Cancelar"
+            class="p-button-secondary mr-2"
+            (click)="dialogoMovimientoVisible = false"
+          ></button>
+          <button
+            pButton
+            type="submit"
+            label="Guardar"
+            [disabled]="movimientoForm.invalid"
+            class="p-button-primary"
+          ></button>
+        </div>
+      </form>
+    </p-dialog>
+
+    <p-toast></p-toast>
   </div>
-
-  <p-table
-    [value]="productos"
-    [paginator]="true"
-    [rows]="10"
-    [loading]="loading"
-    selectionMode="single"
-    [(selection)]="productoSeleccionado"
-    dataKey="id"
-    responsiveLayout="scroll"
-    class="shadow-sm"
-  >
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Nombre</th>
-        <th>Categoría</th>
-        <th>Código</th>
-        <th>Precio</th>
-        <th>Descripción</th>
-        <th>Stock</th>
-        <th>Fecha creación</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-producto>
-      <tr>
-        <td>{{ producto.nombre }}</td>
-        <td>{{ producto.categoria }}</td>
-        <td>{{ producto.codigo }}</td>
-        <td>{{ producto.precio | currency : "USD" }}</td>
-        <td>{{ producto.descripcion}}</td>
-        <td>{{ producto.stock }}</td>
-        <td>{{ producto.fechaCreacion | date : "short"}}</td>
-        <td>
-          <button
-            pButton
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-warning p-mr-2"
-            (click)="editar(producto)"
-          ></button>
-          <button
-            pButton
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-danger"
-            (click)="eliminar(producto.id!)"
-          ></button>
-          <button
-    pButton
-    icon="pi pi-plus-circle"
-    class="p-button-rounded p-button-success"
-    (click)="abrirDialogoMovimiento(producto.id)"
-    title="Agregar Movimiento"
-  ></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
 </div>
-</div>
-</div>
-</div>
-
-<!-- Diálogo para crear/editar producto -->
-<p-dialog
-  [(visible)]="dialogVisible"
-  header="{{ productoSeleccionado ? 'Editar Producto' : 'Nuevo Producto' }}"
-  [modal]="true"
-  [closable]="false"
-  [style]="{ width: '500px' }"
->
-  <form [formGroup]="productoForm" (ngSubmit)="guardar()">
-    <div class="form-group">
-      <label for="nombre">Nombre</label>
-      <input
-        id="nombre"
-        type="text"
-        class="form-control"
-        formControlName="nombre"
-        [ngClass]="{
-          'is-invalid':
-            productoForm.get('nombre')?.invalid &&
-            productoForm.get('nombre')?.touched
-        }"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="categoria">Categoría</label>
-      <input
-        id="categoria"
-        type="text"
-        class="form-control"
-        formControlName="categoria"
-        [ngClass]="{
-          'is-invalid':
-            productoForm.get('categoria')?.invalid &&
-            productoForm.get('categoria')?.touched
-        }"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="codigo">Código</label>
-      <input
-        id="codigo"
-        type="text"
-        class="form-control"
-        formControlName="codigo"
-        [ngClass]="{
-          'is-invalid':
-            productoForm.get('codigo')?.invalid &&
-            productoForm.get('codigo')?.touched
-        }"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="precio">Precio</label>
-      <input
-        id="precio"
-        type="number"
-        class="form-control"
-        formControlName="precio"
-        min="0"
-      />
-    </div>
-    <div class="form-group">
-      <label for="precio">Descripción</label>
-      <textarea
-        id="descripcion"
-        type="text"
-        class="form-control"
-        formControlName="descripcion"
-       
-      ></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="stock">Stock</label>
-      <input
-        id="stock"
-        type="number"
-        class="form-control"
-        formControlName="stock"
-        min="0"
-      />
-    </div>
-
-    <div class="d-flex justify-content-end mt-3">
-      <button
-        pButton
-        type="button"
-        label="Cancelar"
-        class="p-button-secondary mr-2"
-        (click)="dialogVisible = false"
-      ></button>
-      <button
-        pButton
-        type="submit"
-        label="Guardar"
-        [disabled]="productoForm.invalid"
-        class="p-button-primary"
-      ></button>
-    </div>
-  </form>
-</p-dialog>
-<p-dialog
-  [(visible)]="dialogoMovimientoVisible"
-  header="Registrar Movimiento"
-  [modal]="true"
-  [closable]="false"
-  [style]="{ width: '400px' }"
->
-  <form [formGroup]="movimientoForm" (ngSubmit)="registrarMovimiento()">
-    <div class="form-group">
-      <label for="tipo">Tipo</label>
-      <select id="tipo" formControlName="tipo" class="form-control">
-        <option value="ENTRADA">ENTRADA</option>
-        <option value="SALIDA">SALIDA</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="cantidad">Cantidad</label>
-      <input
-        type="number"
-        id="cantidad"
-        formControlName="cantidad"
-        class="form-control"
-        min="1"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="descripcion">Descripción</label>
-      <textarea
-        id="descripcion"
-        formControlName="descripcion"
-        class="form-control"
-        rows="3"
-      ></textarea>
-    </div>
-
-    <div class="d-flex justify-content-end mt-3">
-      <button pButton type="button" label="Cancelar" class="p-button-secondary mr-2" (click)="dialogoMovimientoVisible = false"></button>
-      <button pButton type="submit" label="Guardar" [disabled]="movimientoForm.invalid" class="p-button-primary"></button>
-    </div>
-  </form>
-</p-dialog>
-
-<p-toast></p-toast>

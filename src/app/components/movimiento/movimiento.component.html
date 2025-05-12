@@ -63,17 +63,21 @@
                   <td>{{ mov.descripcion }}</td>
                   <td>
                     <button
-                      class="btn btn-sm btn-info mr-2"
+                      pButton
+                      icon="pi pi-pencil"
+                      size="small"
+                      label="Actualizar"
+                      class="p-button-rounded p-button-warning p-mr-2 mr-2"
                       (click)="editarMovimiento(mov)"
-                    >
-                      Editar
-                    </button>
+                    ></button>
                     <button
-                      class="btn btn-sm btn-danger"
+                      pButton
+                      size="small"
+                      icon="pi pi-trash"
+                      label="Eliminar"
+                      class="p-button-rounded p-button-danger mr-2"
                       (click)="confirmarEliminarMovimiento(mov.id)"
-                    >
-                      Eliminar
-                    </button>
+                    ></button>
                   </td>
                 </tr>
               </ng-template>

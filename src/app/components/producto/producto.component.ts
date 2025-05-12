@@ -1,33 +1,68 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductoService } from '../../core/services/producto.service';
-import { Producto } from '../../interfaces/Producto';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { MessageService } from 'primeng/api';
+
+// PrimeNG Modules
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+
+// Services
+import { ProductoService } from '../../core/services/producto.service';
 import { MovimientoService } from '../../core/services/movimiento.service';
+
+// Interfaces
+import { Producto } from '../../interfaces/Producto';
 import { Movimiento } from '../../interfaces/Movimiento';
 
+/**
+ * Componente para gestión de productos y movimientos de inventario
+ * 
+ * Features:
+ * - CRUD completo de productos
+ * - Registro de movimientos de entrada/salida
+ * - Filtrado de productos
+ * - Notificaciones con PrimeNG Toast
+ */
 @Component({
   selector: 'app-producto',
-  imports: [FormsModule,CommonModule,ReactiveFormsModule,DialogModule,TableModule,ToastModule,ButtonModule],
-  standalone:true,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    // PrimeNG Modules
+    DialogModule,
+    TableModule,
+    ToastModule,
+    ButtonModule
+  ],
   templateUrl: './producto.component.html',
   styleUrl: './producto.component.css'
 })
 export class ProductoComponent implements OnInit {
+  // Estado del componente
   productos: Producto[] = [];
-  productoForm: FormGroup;
   productoSeleccionado: Producto | null = null;
-  dialogVisible: boolean = false;
   loading: boolean = false;
-
-   movimientoForm!: FormGroup;
+  
+  // Control de diálogos
+  dialogVisible: boolean = false;
   dialogoMovimientoVisible = false;
+  
+  // Filtros
+  filtroNombre!: string;
+  filtroCategoria!: string;
+  filtroCodigo!: string;
+  
+  // ID para movimientos
   productoIdParaMovimiento!: number;
+
+  // Formularios
+  productoForm!: FormGroup;
+  movimientoForm!: FormGroup;
 
   constructor(
     private productoService: ProductoService,
@@ -35,6 +70,19 @@ export class ProductoComponent implements OnInit {
     private fb: FormBuilder,
     private messageService: MessageService
   ) {
+    // Inicialización de formularios
+    this.inicializarFormularios();
+  }
+
+  ngOnInit(): void {
+    this.cargarProductos();
+  }
+
+  // --------------------------
+  // Inicialización
+  // --------------------------
+  
+  private inicializarFormularios(): void {
     this.productoForm = this.fb.group({
       id: [],
       nombre: ['', Validators.required],
@@ -51,54 +99,14 @@ export class ProductoComponent implements OnInit {
       descripcion: ['', Validators.required],
     });
   }
-  
 
-    abrirDialogoMovimiento(productoId: number): void {
-    this.productoIdParaMovimiento = productoId;
-    this.movimientoForm.reset({
-      tipo: 'ENTRADA',
-      cantidad: 1,
-      descripcion: ''
-    });
-    this.dialogoMovimientoVisible = true;
-  }
+  // --------------------------
+  // Operaciones CRUD Productos
+  // --------------------------
 
-    registrarMovimiento(): void {
-    if (this.movimientoForm.invalid) return;
-
-    const movimiento: Movimiento = {
-      ...this.movimientoForm.value,
-      idProducto: this.productoIdParaMovimiento ,
-      fecha: new Date().toISOString()
-    };
-
-    this.movimientoService.crearMovimiento(movimiento).subscribe({
-      next: () => {
-         this.cargarProductos();
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Movimiento registrado correctamente'
-        });
-        this.dialogoMovimientoVisible = false;
-      },
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo registrar el movimiento'
-        });
-      }
-    });
-  }
-
-  ngOnInit(): void {
-    this.cargarProductos();
-  }
-
-  cargarProductos(): void {
+  cargarProductos(nombre?: string, categoria?: string, codigo?: string): void {
     this.loading = true;
-    this.productoService.obtenerProductos().subscribe({
+    this.productoService.obtenerProductos(nombre, categoria, codigo).subscribe({
       next: (data) => {
         this.productos = data;
         this.loading = false;
@@ -110,38 +118,6 @@ export class ProductoComponent implements OnInit {
     });
   }
 
-  buscar(nombre?: string, categoria?: string, codigo?: string): void {
-    this.loading = true;
-    this.productoService.obtenerProductos(nombre, categoria, codigo).subscribe({
-      next: (data) => {
-        this.productos = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-        this.mostrarError('Error al buscar productos');
-      },
-    });
-  }
-
-  abrirDialogoNuevo(): void {
-    this.productoForm.reset();
-    this.productoSeleccionado = null;
-    this.dialogVisible = true;
-  }
-
-  guardar(): void {
-    if (this.productoForm.invalid) return;
-
-    const producto: Producto = this.productoForm.value;
-
-    if (this.productoSeleccionado?.id) {
-      this.actualizar(producto);
-    } else {
-      this.crear(producto);
-    }
-  }
-
   crear(producto: Producto): void {
     this.productoService.crearProducto(producto).subscribe({
       next: (data) => {
@@ -149,14 +125,8 @@ export class ProductoComponent implements OnInit {
         this.dialogVisible = false;
         this.mostrarExito('Producto creado exitosamente');
       },
-     error: (err) => {
-      const mensaje = err.error || 'Error al crear el producto';
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: mensaje,
-      })
-    }});
+      error: (err) => this.mostrarError(err.error || 'Error al crear el producto')
+    });
   }
 
   actualizar(producto: Producto): void {
@@ -185,17 +155,92 @@ export class ProductoComponent implements OnInit {
     });
   }
 
+  // --------------------------
+  // Gestión de Movimientos
+  // --------------------------
+
+  abrirDialogoMovimiento(productoId: number): void {
+    this.productoIdParaMovimiento = productoId;
+    this.movimientoForm.reset({
+      tipo: 'ENTRADA',
+      cantidad: 1,
+      descripcion: ''
+    });
+    this.dialogoMovimientoVisible = true;
+  }
+
+  registrarMovimiento(): void {
+    if (this.movimientoForm.invalid) return;
+
+    const movimiento: Movimiento = {
+      ...this.movimientoForm.value,
+      idProducto: this.productoIdParaMovimiento,
+      fecha: new Date().toISOString()
+    };
+
+    this.movimientoService.crearMovimiento(movimiento).subscribe({
+      next: (respuesta: any) => {
+        this.cargarProductos();
+        this.mostrarExito('Movimiento registrado correctamente');
+        
+        if (respuesta.stockBajo) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Stock bajo',
+            detail: `El producto "${respuesta.nombreProducto}" tiene solo ${respuesta.cantidad} unidades.`            
+          });
+        }
+
+        this.dialogoMovimientoVisible = false;
+      },
+      error: (err) => this.mostrarError(err.error || 'Error al crear el Movimiento')
+    });
+  }
+
+  // --------------------------
+  // Métodos Auxiliares
+  // --------------------------
+
+  buscar(nombre?: string, categoria?: string, codigo?: string): void {
+    this.cargarProductos(nombre, categoria, codigo);
+  }
+
+  abrirDialogoNuevo(): void {
+    this.productoForm.reset();
+    this.productoSeleccionado = null;
+    this.dialogVisible = true;
+  }
+
   editar(producto: Producto): void {
     this.productoSeleccionado = producto;
     this.productoForm.patchValue(producto);
     this.dialogVisible = true;
   }
 
-  mostrarExito(mensaje: string): void {
-    this.messageService.add({ severity: 'success', summary: 'Éxito', detail: mensaje });
+  guardar(): void {
+    if (this.productoForm.invalid) return;
+
+    const producto: Producto = this.productoForm.value;
+    this.productoSeleccionado?.id ? this.actualizar(producto) : this.crear(producto);
   }
 
-  mostrarError(mensaje: string): void {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: mensaje });
+  // --------------------------
+  // Helpers de Notificación
+  // --------------------------
+
+  private mostrarExito(mensaje: string): void {
+    this.messageService.add({ 
+      severity: 'success', 
+      summary: 'Éxito', 
+      detail: mensaje 
+    });
+  }
+
+  private mostrarError(mensaje: string): void {
+    this.messageService.add({ 
+      severity: 'error', 
+      summary: 'Error', 
+      detail: mensaje 
+    });
   }
 }
