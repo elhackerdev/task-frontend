@@ -26,7 +26,7 @@ npm install -g @angular/cli
 1. **Clona el repositorio:**
 
 ```bash
- git clone [https://github.com/elhackerdev/task-frontend](https://github.com/elhackerdev/task-frontend)
+ git clone https://github.com/elhackerdev/task-frontend
 ```
 
 2. **Accede al directorio del proyecto:**
