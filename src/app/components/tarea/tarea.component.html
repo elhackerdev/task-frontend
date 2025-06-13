@@ -1,0 +1,193 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <div class="row" align="center">
+          <div class="col-md-12">
+            <h3>Gestión de Tareas</h3>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-plus"
+                label="Nueva Tarea"
+                class="p-button-success"
+                (click)="abrirDialogoNuevo()"
+              ></button>
+            </div>
+
+            <div class="row mb-3">
+  <div class="col-md-4">
+    <label>Estado</label>
+    <p-select
+      [options]="estados"
+      [(ngModel)]="filtroEstado"
+      placeholder="Seleccionar Estado"
+      optionLabel="label"
+      optionValue="value"
+      class="w-100"
+    ></p-select>
+  </div>
+
+  <div class="col-md-4">
+    <label>Prioridad</label>
+    <p-select
+      [options]="prioridades"
+      [(ngModel)]="filtroPrioridad"
+      placeholder="Seleccionar Prioridad"
+      optionLabel="label"
+      optionValue="value"
+      class="w-100"
+    ></p-select>
+  </div>
+
+  <div class="col-md-4 d-flex align-items-end">
+    <button class="btn btn-primary w-100 mr-2" (click)="buscarTareas()">
+      Buscar
+    </button>
+    <button class="btn btn-info w-100" (click)="limpiarFiltros()">
+      Limpiar Filtros
+    </button>
+  </div>
+</div>
+
+            <p-table
+              [value]="tareas"
+              [paginator]="true"
+              [rows]="10"
+              [loading]="loading"
+              showCurrentPageReport
+              selectionMode="single"
+              [(selection)]="tareaSeleccionada"
+              dataKey="id"
+              responsiveLayout="scroll"
+              currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+
+              class="shadow-sm"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Título</th>
+                  <th>Descripción</th>
+                  <th>Estado</th>
+                  <th>Fecha Límite</th>
+                  <th>Prioridad</th>
+                  <th>Acciones</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-tarea>
+                <tr>
+                  <td>{{ tarea.title }}</td>
+                  <td>{{ tarea.description }}</td>
+                  <td>{{ tarea.status }}</td>
+                  <td>{{ tarea.dueDate | date: 'shortDate' }}</td>
+                  <td>{{ tarea.priority }}</td>
+                  <td style="font-size: xx-small;">
+                    <div class="btn-group">
+                      <button
+                        pButton
+                        icon="pi pi-pencil"
+                        size="small"
+                        label="Editar"
+                        class="p-button-rounded p-button-warning mr-2"
+                        (click)="editar(tarea)"
+                      ></button>
+                      <button
+                        pButton
+                        icon="pi pi-trash"
+                        size="small"
+                        label="Eliminar"
+                        class="p-button-rounded p-button-danger"
+                        (click)="eliminar(tarea.id)"
+                      ></button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diálogo para crear/editar tarea -->
+    <p-dialog
+      [(visible)]="dialogVisible"
+      [modal]="true"
+      header="{{ tareaSeleccionada ? 'Editar Tarea' : 'Nueva Tarea' }}"
+      [style]="{ width: '500px' }"
+    >
+      <form [formGroup]="tareaForm" (ngSubmit)="guardar()">
+        <div class="form-group">
+          <label for="title">Título</label>
+          <input
+            id="title"
+            type="text"
+            class="form-control"
+            formControlName="title"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <textarea
+            id="description"
+            class="form-control"
+            formControlName="description"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Estado</label>
+          <select class="form-control" formControlName="status">
+            <option value="pendiente">Pendiente</option>
+            <option value="en progreso">En progreso</option>
+            <option value="completada">Completada</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="dueDate">Fecha Límite</label>
+          <input
+            id="dueDate"
+            type="date"
+            class="form-control"
+            formControlName="dueDate"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="priority">Prioridad</label>
+          <select class="form-control" formControlName="priority">
+            <option value="alta">Alta</option>
+            <option value="media">Media</option>
+            <option value="baja">Baja</option>
+          </select>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <button
+            pButton
+            type="button"
+            label="Cancelar"
+            class="p-button-secondary mr-2"
+            (click)="dialogVisible = false"
+          ></button>
+          <button
+            pButton
+            type="submit"
+            label="Guardar"
+            [disabled]="tareaForm.invalid"
+            class="p-button-primary"
+          ></button>
+        </div>
+      </form>
+    </p-dialog>
+
+    <p-toast></p-toast>
+  </div>
+</div>
+

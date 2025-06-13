@@ -6,11 +6,12 @@ import Aura from '@primeng/themes/aura';
 import Material from '@primeng/themes/aura';
 import { routes } from './app.routes';
 import { FilterMatchMode, MessageService } from 'primeng/api';
-import { provideHttpClient} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient} from '@angular/common/http';
+import { TokenInterceptor } from './core/interceptors/token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideAnimationsAsync(),
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideAnimationsAsync(),
     provideHttpClient(),       
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),

@@ -1,0 +1,51 @@
+<div
+  class="app-container app-theme-dark body-tabs-shadow fixed-header closed-sidebar"
+>
+  <!-- INICIA LA SECCIÓN  CONTENEDOR DE TODA LA CABECERA DE MENU-->
+
+  <!-- inicia la sección  contenedor del logo izquierdo-->
+
+  <!-- fin la sección  contenedor del logo izquierdo-->
+
+  <app-navbar></app-navbar>
+
+  <!-- FIN LA SECCIÓN  CONTENEDOR DE TODA LA CABECERA DE MENU-->
+  <!------------------------------------------------------------------------------------------------------------>
+
+  <div class="app-main">
+    <!-- inicia la seccion lateral izquierda donde se encuentra la navegación-->
+
+    <div class="app-main__outer">
+      <div
+        class="app-main__inner"
+        style="
+          background-repeat: no-repeat;
+          background-position: right;
+          background-position-y: 50px;
+        "
+      >
+        <router-outlet></router-outlet>
+      </div>
+      <!-- <div class="app-wrapper-footer">-->
+      <div class="app-footer">
+        <div class="app-footer__inner">
+          <div class="app-footer-left">
+            <div>
+              <span id="copyright">
+                <script>
+                  document
+                    .getElementById("copyright")
+                    .appendChild(
+                      document.createTextNode(new Date().getFullYear())
+                    );
+                </script>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--</div>-->
+    </div>
+  </div>
+</div>
+<!-- Diálogos de confirmación -->
